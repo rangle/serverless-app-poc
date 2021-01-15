@@ -1,7 +1,15 @@
-import ProductList from './containers/product-list';
+import ProductList from './products/product-list';
+import SignUpForm from './auth/signup-form';
+import SignInForm from './auth/signin-form';
 
 const App = () => {
-  return <ProductList></ProductList>;
+  return (
+    <div>
+      <SignUpForm />
+      <SignInForm />
+      <ProductList />
+    </div>
+  );
 };
 
 export default App;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import ContentService from '../content/content.service';
 import PaymentService from '../payment/payment.service';
-import ProductCard from '../components/product-card';
+import ProductCard from './product-card';
 
 const handleSubscription = async (successCb, errorCb) => {
   let subscriptionResult;
