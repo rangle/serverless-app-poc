@@ -16,7 +16,8 @@ export const createSubscription = async (req, context) => {
     return {
       statusCode: 200,
       headers: {
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin':
+          'http://bitetut-poc.s3-website-us-east-1.amazonaws.com',
         'Access-Control-Allow-Credentials': true,
       },
       body: JSON.stringify({
@@ -26,5 +27,11 @@ export const createSubscription = async (req, context) => {
     };
   } catch (err) {
     console.log(err);
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: `Failed to create subscription ${err.message}`,
+      }),
+    };
   }
 };

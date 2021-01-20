@@ -1,21 +1,29 @@
-import { useState } from 'react';
-import AuthService from './auth.service';
-
+import { useState, useContext } from 'react';
+import { AuthContext } from './auth-context';
 const SignInForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  const { authenticate, getUserAttributes, getSession } = useContext(
+    AuthContext
+  );
+
   const handleSignIn = async (e) => {
     e.preventDefault();
     let signInResult;
     try {
-      signInResult = await AuthService.signIn({ email, password });
+      signInResult = await authenticate({ email, password });
       setSuccessMessage('Sign in success!');
     } catch (error) {
       setErrorMessage(error.message);
     }
+  };
+
+  const testAttribute = async () => {
+    const att = await getSession();
+    console.log(att);
   };
 
   return (
@@ -35,6 +43,7 @@ const SignInForm = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
         <input type="submit" />
+        <button onClick={testAttribute}>test</button>
       </form>
       <div>{successMessage}</div>
       <div>{errorMessage}</div>

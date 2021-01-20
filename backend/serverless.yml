@@ -9,6 +9,11 @@ provider:
   name: aws
   runtime: nodejs10.x
   profile: sz-dev
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 's3:*'
+      Resource: 'arn:aws:s3:::bite-tut-poc-assets/*'
 
 custom:
   defaultStage: dev
@@ -24,10 +29,10 @@ functions:
           path: /subscription
           method: post
           cors: true
-          # authorizer:
-          #   type: COGNITO_USER_POOLS
-          #   authorizerId:
-          #     Ref: ApiGatewayAuthorizer
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
   notifyInvoicePaid:
     handler: src/handler.notifyInvoicePaid
     events:
@@ -36,7 +41,6 @@ functions:
           method: post
           cors: true
 
-# you can add CloudFormation resource templates here
 resources:
   Resources:
     CognitoUserPool:

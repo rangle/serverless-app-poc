@@ -1,25 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { AuthContext } from '../auth/auth-context';
 import ContentService from '../content/content.service';
 import PaymentService from '../payment/payment.service';
 import ProductCard from './product-card';
-
-const handleSubscription = async (successCb, errorCb) => {
-  let subscriptionResult;
-  try {
-    subscriptionResult = await PaymentService.createSubscription();
-    if (subscriptionResult.hasOwnProperty('error')) {
-      errorCb(subscriptionResult.error);
-    }
-    successCb(subscriptionResult.message);
-  } catch (error) {
-    errorCb(error.message);
-  }
-};
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
   const [successMessage, SetSuccessMessage] = useState('');
   const [errorMessage, SetErrorMessage] = useState('');
+
+  const { token } = useContext(AuthContext);
 
   useEffect(() => {
     const updateProducts = async () => {
@@ -29,6 +19,19 @@ const ProductList = () => {
 
     updateProducts();
   }, []);
+
+  const handleSubscription = async (successCb, errorCb) => {
+    let subscriptionResult;
+    try {
+      subscriptionResult = await PaymentService.createSubscription(token);
+      if (subscriptionResult.hasOwnProperty('error')) {
+        errorCb(subscriptionResult.error);
+      }
+      successCb(subscriptionResult.message);
+    } catch (error) {
+      errorCb(error.message);
+    }
+  };
 
   return (
     <>
