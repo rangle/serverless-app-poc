@@ -6,13 +6,19 @@ import ProductCard from './product-card';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
+  const [token, setToken] = useState('');
+
   const [successMessage, SetSuccessMessage] = useState('');
   const [errorMessage, SetErrorMessage] = useState('');
 
-  const { token } = useContext(AuthContext);
+  const { getSession } = useContext(AuthContext);
 
   useEffect(() => {
     const updateProducts = async () => {
+      const session = await getSession();
+      if (session) {
+        setToken(session.token);
+      }
       const productDetails = await ContentService.getProductDetails();
       setProducts(productDetails);
     };
