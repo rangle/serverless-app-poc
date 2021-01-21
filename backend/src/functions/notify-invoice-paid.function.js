@@ -11,14 +11,11 @@ export const notifyInvoicePaid = async (req, context) => {
     const event = JSON.parse(req.body);
     let presignedURL;
     if (event.type === 'invoice.paid') {
-      // step 1. updates on user database
-      // step 2. create pre-signed url for private S3 bucket with one month expiry
-
       // Hard coded parameters for AWS SDK
       const region = 'us-east-1';
       const bucket = 'bite-tut-poc-assets'; //BUCKET_NAME
       const objectKey = 'sample-private-resource.png'; // FILE_NAME
-      const signedUrlExpireSeconds = 60 * 5; //EXPIRATION
+      const signedUrlExpireSeconds = 60 * 60 * 24; //EXPIRATION
 
       AWS.config.update(region);
       const s3 = new AWS.S3();
@@ -27,6 +24,28 @@ export const notifyInvoicePaid = async (req, context) => {
         Key: objectKey,
         Expires: signedUrlExpireSeconds,
       });
+
+      // Notify customers with email
+      const ses = new AWS.SES();
+      const sourceEmail = 'stephaniezeng521@gmail.com';
+      const recipientEmailAddress = ['stephanie.zeng@rangle.io'];
+      const params = {
+        Destination: {
+          ToAddresses: recipientEmailAddress,
+        },
+        Message: {
+          Body: {
+            Text: {
+              Data: `Thanks for purchasing this content. Download the content from ${presignedURL}`,
+            },
+          },
+
+          Subject: { Data: 'Your content is ready for download!' },
+        },
+        Source: sourceEmail,
+      };
+
+      await ses.sendEmail(params).promise();
     }
     return {
       statusCode: 200,
