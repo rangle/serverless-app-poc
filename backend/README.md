@@ -1,4 +1,4 @@
-# BiteTut POC Backend
+# BiteTut POC Serverless Application
 
 The BiteTut backend is built using the Serverless Framework, which creates an AWS CloudFormation stack that includes AWS Lambda, Cognito, and SES resources.
 
@@ -18,10 +18,10 @@ Run API Gateway locally
 npm run dev
 ```
 
-Test the function using the serverless `invoke` command.
+Test the function using the serverless `invoke` command
 
 ```script
-sls invoke local -f [function-name] -p ./test-events/create-user.json
+sls invoke local -f [function-name]
 ```
 
 ## Deploy Lambda Functions
