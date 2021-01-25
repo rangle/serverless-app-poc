@@ -1,29 +1,35 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from './auth-context';
 const SignInForm = () => {
-  const [email, setEmail] = useState('');
+  const [email, setSignInEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const { authenticate, getUserAttributes, getSession } = useContext(
+  const { authenticate, getSession, setToken, setName, setEmail } = useContext(
     AuthContext
   );
 
+  const updateAuthContext = async () => {
+    try {
+      const { attributes, token } = await getSession();
+      setToken(token);
+      setName(attributes.name);
+      setEmail(attributes.email);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const handleSignIn = async (e) => {
     e.preventDefault();
-    let signInResult;
     try {
-      signInResult = await authenticate({ email, password });
+      await authenticate({ email, password });
+      await updateAuthContext();
       setSuccessMessage('Sign in success!');
     } catch (error) {
       setErrorMessage(error.message);
     }
-  };
-
-  const testAttribute = async () => {
-    const att = await getSession();
-    console.log(att);
   };
 
   return (
@@ -34,7 +40,7 @@ const SignInForm = () => {
           type="email"
           value={email}
           placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setSignInEmail(e.target.value)}
         />
         <input
           type="password"
@@ -43,7 +49,6 @@ const SignInForm = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
         <input type="submit" />
-        <button onClick={testAttribute}>test</button>
       </form>
       <div>{successMessage}</div>
       <div>{errorMessage}</div>

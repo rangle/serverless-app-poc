@@ -1,13 +1,17 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
+import { AuthContext } from './auth-context';
 import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
-import AuthService from './auth.service';
 
 const SignUpForm = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+  const [name, setUserName] = useState('');
+  const [email, setUserEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+
+  const { signUp, getSession, setToken, setName, setEmail } = useContext(
+    AuthContext
+  );
 
   const attributeEmail = new CognitoUserAttribute({
     Name: 'email',
@@ -22,7 +26,7 @@ const SignUpForm = () => {
     e.preventDefault();
     let signUpResult;
     try {
-      signUpResult = await AuthService.signUp({
+      signUpResult = await signUp({
         name,
         email,
         password,
@@ -43,13 +47,13 @@ const SignUpForm = () => {
           type="text"
           value={name}
           placeholder="Name"
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => setUserName(e.target.value)}
         />
         <input
           type="email"
           value={email}
           placeholder="Email"
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) => setUserEmail(e.target.value)}
         />
         <input
           type="password"

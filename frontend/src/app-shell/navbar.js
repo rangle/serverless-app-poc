@@ -1,10 +1,8 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { AuthContext } from '../auth/auth-context';
 
 const Navbar = () => {
-  const { getSession } = useContext(AuthContext);
-  const [name, setName] = useState('');
-  const isLoggedIn = true;
+  const { getSession, name, setName, token } = useContext(AuthContext);
 
   useEffect(() => {
     getSession().then(({ attributes, user }) => {
@@ -15,14 +13,14 @@ const Navbar = () => {
 
   return (
     <div>
-      {isLoggedIn && (
+      {token && (
         <>
           <div>Welcome back {name}! </div>
           <button>Sign out</button>
         </>
       )}
 
-      {!isLoggedIn && (
+      {!token && (
         <>
           <button>Sign In</button>
         </>
