@@ -5,6 +5,7 @@ export const notifyInvoicePaid = async (req, context) => {
     const event = JSON.parse(req.body);
     let presignedURL;
     if (event.type === 'invoice.paid') {
+      const { customer_email } = event.data;
       // Hard coded parameters for AWS SDK
       const bucket = 'bite-tut-poc-assets'; //BUCKET_NAME
       const objectKey = 'sample-private-resource.png'; // FILE_NAME
@@ -20,7 +21,7 @@ export const notifyInvoicePaid = async (req, context) => {
       // Notify customers with email
       const ses = new AWS.SES();
       const sourceEmail = 'stephaniezeng521@gmail.com';
-      const recipientEmailAddress = ['stephanie.zeng@rangle.io'];
+      const recipientEmailAddress = [customer_email];
       const params = {
         Destination: {
           ToAddresses: recipientEmailAddress,
@@ -42,10 +43,11 @@ export const notifyInvoicePaid = async (req, context) => {
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: `Invoice is paid! Your pre-signed url is ${presignedURL}`,
+        message: `success`,
       }),
     };
   } catch (err) {
+    console.log(err);
     return {
       statusCode: 400,
       body: JSON.stringify({

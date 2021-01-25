@@ -15,15 +15,22 @@ const ProductList = () => {
 
   useEffect(() => {
     const updateProducts = async () => {
-      const session = await getSession();
-      if (session) {
-        setToken(session.token);
-      }
       const productDetails = await ContentService.getProductDetails();
       setProducts(productDetails);
     };
 
     updateProducts();
+  }, []);
+
+  useEffect(() => {
+    const updateToken = async () => {
+      const session = await getSession();
+      if (session) {
+        setToken(session.token);
+      }
+    };
+
+    updateToken();
   }, []);
 
   const handleSubscription = async (successCb, errorCb) => {
