@@ -1,18 +1,24 @@
 service: bite-tut-poc
 
+# Create an optimized package for lambda functions
+package:
+  individually: true
+
 plugins:
-  - serverless-webpack
+  - serverless-bundle # Package functions with Webpack
   - serverless-offline
-  - serverless-dotenv-plugin
+  - serverless-dotenv-plugin # Load .env as environment variables
 
 provider:
   name: aws
   runtime: nodejs10.x
-  profile: sz-dev
+  profile: sz-${self:custom.currentStage}
+  region: us-east-1
   iamRoleStatements:
     - Effect: 'Allow'
       Action:
         - 's3:*'
+      # Temporary S3 bucket to store private assets
       Resource: 'arn:aws:s3:::bite-tut-poc-assets/*'
     - Effect: Allow
       Action:
@@ -22,6 +28,7 @@ provider:
 
 custom:
   defaultStage: dev
+  # Load the current stage depending on the stage specified in the command line options, (or default to `dev` if unspecified)
   currentStage: ${opt:stage, self:custom.defaultStage}
   userPoolName: tutorial-poc-user-pool-${self:custom.currentStage}
   userPoolClientName: tutorial-poc-user-pool-client-${self:custom.currentStage}
@@ -43,13 +50,6 @@ functions:
     events:
       - http:
           path: /notify-invoice-paid
-          method: post
-          cors: true
-  sendEmail:
-    handler: src/handler.sendEmail
-    events:
-      - http:
-          path: /send-email
           method: post
           cors: true
 

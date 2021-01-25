@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "sls offline",
-    "deploy": "sls deploy"
+    "test": "serverless-bundle test",
+    "deploy": "sls deploy -v",
+    "deploy:prod": "sls deploy --stage prod -v"
   },
   "author": "Stephanie Zeng",
   "license": "MIT",
@@ -12,9 +14,8 @@
     "stripe": "^8.117.0"
   },
   "devDependencies": {
+    "serverless-bundle": "^4.2.0",
     "serverless-dotenv-plugin": "^3.1.0",
-    "serverless-offline": "^6.8.0",
-    "serverless-webpack": "^5.3.5",
-    "webpack": "^5.2.0"
+    "serverless-offline": "^6.8.0"
   }
 }
