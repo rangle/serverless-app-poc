@@ -11,7 +11,7 @@ const ProductList = () => {
   const [successMessage, SetSuccessMessage] = useState('');
   const [errorMessage, SetErrorMessage] = useState('');
 
-  const { getSession } = useContext(AuthContext);
+  const { getSession, paymentMethodId } = useContext(AuthContext);
 
   useEffect(() => {
     const updateProducts = async () => {
@@ -36,7 +36,10 @@ const ProductList = () => {
   const handleSubscription = async (successCb, errorCb) => {
     let subscriptionResult;
     try {
-      subscriptionResult = await PaymentService.createSubscription(token);
+      subscriptionResult = await PaymentService.createSubscription(
+        token,
+        paymentMethodId
+      );
       if (subscriptionResult.hasOwnProperty('error')) {
         errorCb(subscriptionResult.error);
       }

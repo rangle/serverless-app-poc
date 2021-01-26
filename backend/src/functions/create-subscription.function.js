@@ -3,14 +3,29 @@ import { Stripe } from 'stripe';
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
 
 export const createSubscription = async (req, context) => {
+  const { paymentMethodId, customerId, priceId } = JSON.parse(req.body);
+
   try {
     const stripe = new Stripe(stripeSecret, {
       apiVersion: '2020-03-02',
     });
 
+    // Set the default payment method on the customer
+    let paymentMethod = await stripe.paymentMethods.attach(paymentMethodId, {
+      customer: customerId,
+    });
+
+    await stripe.customers.update(customerId, {
+      invoice_settings: {
+        default_payment_method: paymentMethod.id,
+      },
+    });
+
+    // Create the subscription
     const subscription = await stripe.subscriptions.create({
-      customer: 'cus_IHAIpndpVfxujF',
-      items: [{ price: 'price_1Hgbz3HeCPeFIGDDI2RSPHB3' }],
+      customer: customerId,
+      items: [{ price: priceId }],
+      expand: ['latest_invoice.payment_intent'],
     });
 
     return {

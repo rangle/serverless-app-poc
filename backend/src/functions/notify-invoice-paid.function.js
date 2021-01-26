@@ -5,7 +5,7 @@ export const notifyInvoicePaid = async (req, context) => {
     const event = JSON.parse(req.body);
     let presignedURL;
     if (event.type === 'invoice.paid') {
-      const { customer_email } = event.data;
+      const { customer_email } = event.data.object;
       // Hard coded parameters for AWS SDK
       const bucket = 'bite-tut-poc-assets'; //BUCKET_NAME
       const objectKey = 'sample-private-resource.png'; // FILE_NAME
