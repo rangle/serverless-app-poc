@@ -15,16 +15,16 @@ provider:
   profile: sz-${self:custom.currentStage}
   region: ${opt:region, 'us-east-1'}
   iamRoleStatements:
-    - Effect: "Allow"
+    - Effect: 'Allow'
       Action:
-        - "s3:*"
+        - 's3:*'
       # Temporary S3 bucket to store private assets
-      Resource: "arn:aws:s3:::bite-tut-poc-assets/*"
+      Resource: 'arn:aws:s3:::bite-tut-poc-assets/*'
     - Effect: Allow
       Action:
         - ses:SendEmail
         - ses:SendRawEmail
-      Resource: "*"
+      Resource: '*'
 
 custom:
   defaultStage: dev
@@ -32,6 +32,8 @@ custom:
   currentStage: ${opt:stage, self:custom.defaultStage}
   userPoolName: tutorial-poc-user-pool-${self:custom.currentStage}
   userPoolClientName: tutorial-poc-user-pool-client-${self:custom.currentStage}
+  bundle:
+    linting: false
 
 functions:
   createSubscription:
@@ -56,26 +58,26 @@ functions:
 resources:
   Resources:
     GatewayResponseDefault4XX:
-      Type: "AWS::ApiGateway::GatewayResponse"
+      Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
         ResponseParameters:
           gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
         ResponseType: DEFAULT_4XX
         RestApiId:
-          Ref: "ApiGatewayRestApi"
+          Ref: 'ApiGatewayRestApi'
     GatewayResponseDefault5XX:
-      Type: "AWS::ApiGateway::GatewayResponse"
+      Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
         ResponseParameters:
           gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
           gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
         ResponseType: DEFAULT_5XX
         RestApiId:
-          Ref: "ApiGatewayRestApi"
+          Ref: 'ApiGatewayRestApi'
 
     CognitoUserPool:
-      Type: "AWS::Cognito::UserPool"
+      Type: 'AWS::Cognito::UserPool'
       Properties:
         MfaConfiguration: OFF
         UserPoolName: ${self:custom.userPoolName}
@@ -98,7 +100,7 @@ resources:
             Mutable: false
             Required: true
     CognitoUserPoolClient:
-      Type: "AWS::Cognito::UserPoolClient"
+      Type: 'AWS::Cognito::UserPoolClient'
       Properties:
         ClientName: ${self:custom.userPoolClientName}
         GenerateSecret: False
