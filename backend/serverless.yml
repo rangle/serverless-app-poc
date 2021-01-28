@@ -1,4 +1,4 @@
-service: bite-tut-poc
+service: BiteTutService
 
 # Create an optimized package for lambda functions
 package:
@@ -12,6 +12,7 @@ plugins:
 provider:
   name: aws
   runtime: nodejs10.x
+  memorySize: 256
   profile: sz-${self:custom.currentStage}
   region: ${opt:region, 'us-east-1'}
   iamRoleStatements:
@@ -25,17 +26,29 @@ provider:
         - ses:SendEmail
         - ses:SendRawEmail
       Resource: '*'
+    - Effect: 'Allow'
+      Action:
+        - 'sns:*'
+      Resource: '*'
 
 custom:
   defaultStage: dev
   # Load the current stage depending on the stage specified in the command line options, (or default to `dev` if unspecified)
   currentStage: ${opt:stage, self:custom.defaultStage}
-  userPoolName: tutorial-poc-user-pool-${self:custom.currentStage}
-  userPoolClientName: tutorial-poc-user-pool-client-${self:custom.currentStage}
+  userPoolName: bite-tut-user-pool-${self:custom.currentStage}
+  userPoolClientName: bite-tut-user-pool-client-${self:custom.currentStage}
   bundle:
-    linting: false
+    linting: false # disable linting for lambda functions
 
 functions:
+  postUserCreation:
+    handler: src/handler.postUserCreation
+    description: publishes user data as SNS events after a user is created in the BiteTutUserPool
+    events:
+      - cognitoUserPool:
+          pool: BiteTutUserPool
+          trigger: PostConfirmation
+          existing: true
   createSubscription:
     handler: src/handler.createSubscription
     events:
@@ -76,7 +89,7 @@ resources:
         RestApiId:
           Ref: 'ApiGatewayRestApi'
 
-    CognitoUserPool:
+    CognitoUserPoolBiteTutUserPool:
       Type: 'AWS::Cognito::UserPool'
       Properties:
         MfaConfiguration: OFF
@@ -105,7 +118,7 @@ resources:
         ClientName: ${self:custom.userPoolClientName}
         GenerateSecret: False
         UserPoolId:
-          Ref: CognitoUserPool
+          Ref: CognitoUserPoolBiteTutUserPool
 
     ApiGatewayAuthorizer:
       DependsOn:
@@ -118,12 +131,10 @@ resources:
           Ref: ApiGatewayRestApi
         Type: COGNITO_USER_POOLS
         ProviderARNs:
-          - Fn::GetAtt: [CognitoUserPool, Arn]
+          - Fn::GetAtt: [CognitoUserPoolBiteTutUserPool, Arn]
   Outputs:
     CognitoUserPoolArn:
       Value:
         Fn::GetAtt:
-          - CognitoUserPool
+          - CognitoUserPoolBiteTutUserPool
           - Arn
-      Export:
-        Name: CognitoUserPoolArn-${self:custom.currentStage}
