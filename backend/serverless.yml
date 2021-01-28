@@ -138,5 +138,3 @@ resources:
         Fn::GetAtt:
           - CognitoUserPoolBiteTutUserPool
           - Arn
-      Export:
-        Name: CognitoUserPoolArn-${self:custom.currentStage}

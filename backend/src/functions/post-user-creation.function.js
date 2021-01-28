@@ -1,8 +1,7 @@
 import AWS from 'aws-sdk';
 const sns = new AWS.SNS();
-export const postUserCreation = async (event, context) => {
-  console.log('event is', event);
-
+export const postUserCreation = async (event, context, callback) => {
+  console.log('event', event);
   if (!event.request.userAttributes) {
     throw new Error('No new user created from the user pool.');
   }
@@ -17,19 +16,10 @@ export const postUserCreation = async (event, context) => {
 
   try {
     await sns.publish(snsParam).promise();
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: `Success`,
-      }),
-    };
+    // Return to Amazon Cognito
+    callback(null, event);
   } catch (err) {
     console.log(err);
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        message: `${err.message}`,
-      }),
-    };
+    callback(null, event);
   }
 };
