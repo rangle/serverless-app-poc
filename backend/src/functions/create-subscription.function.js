@@ -1,15 +1,14 @@
 import { Stripe } from 'stripe';
 
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
+const stripe = new Stripe(stripeSecret, {
+  apiVersion: '2020-03-02',
+});
 
 export const createSubscription = async (req, context) => {
   const { paymentMethodId, customerId, priceId } = JSON.parse(req.body);
 
   try {
-    const stripe = new Stripe(stripeSecret, {
-      apiVersion: '2020-03-02',
-    });
-
     // Set the default payment method on the customer
     let paymentMethod = await stripe.paymentMethods.attach(paymentMethodId, {
       customer: customerId,

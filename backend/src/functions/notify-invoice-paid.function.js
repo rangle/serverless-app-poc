@@ -1,4 +1,6 @@
 import AWS from 'aws-sdk';
+const s3 = new AWS.S3({ apiVersion: '2012-08-10' });
+const ses = new AWS.SES({ apiVersion: '2012-08-10' });
 
 export const notifyInvoicePaid = async (req, context) => {
   try {
@@ -11,7 +13,6 @@ export const notifyInvoicePaid = async (req, context) => {
       const objectKey = 'sample-private-resource.png'; // FILE_NAME
       const signedUrlExpireSeconds = 60 * 60 * 24; //EXPIRATION
 
-      const s3 = new AWS.S3();
       presignedURL = s3.getSignedUrl('getObject', {
         Bucket: bucket,
         Key: objectKey,
@@ -19,7 +20,6 @@ export const notifyInvoicePaid = async (req, context) => {
       });
 
       // Notify customers with email
-      const ses = new AWS.SES();
       const sourceEmail = 'stephaniezeng521@gmail.com';
       const recipientEmailAddress = [customer_email];
       const params = {
