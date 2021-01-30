@@ -30,6 +30,15 @@ provider:
       Action:
         - 'sns:*'
       Resource: '*'
+    - Effect: 'Allow'
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: 'arn:aws:dynamodb:us-east-1:242421767634:table/UsersTable'
 
 custom:
   defaultStage: dev
@@ -49,6 +58,11 @@ functions:
           pool: BiteTutUserPool
           trigger: PostConfirmation
           existing: true
+  saveUser:
+    handler: src/handler.saveUser
+    description: save user data to DynamoDB
+    events:
+      - sns: 'arn:aws:sns:us-east-1:242421767634:confirm-user-creation'
   createSubscription:
     handler: src/handler.createSubscription
     events:
@@ -69,7 +83,22 @@ functions:
           cors: true
 
 resources:
+  # Cloudformation resources
   Resources:
+    # DynamoDB table - users
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: UsersTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          # Use the Cognito sub as the partition key
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+
     GatewayResponseDefault4XX:
       Type: 'AWS::ApiGateway::GatewayResponse'
       Properties:
