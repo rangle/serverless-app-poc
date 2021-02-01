@@ -6,13 +6,19 @@ const SignInForm = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const { authenticate, getSession, setToken, setName, setEmail } = useContext(
-    AuthContext
-  );
+  const {
+    authenticate,
+    getSession,
+    setSub,
+    setToken,
+    setName,
+    setEmail,
+  } = useContext(AuthContext);
 
   const updateAuthContext = async () => {
     try {
-      const { attributes, token } = await getSession();
+      const { attributes, token, sub } = await getSession();
+      setSub(sub);
       setToken(token);
       setName(attributes.name);
       setEmail(attributes.email);
@@ -50,8 +56,8 @@ const SignInForm = () => {
         />
         <input type="submit" />
       </form>
-      <div>{successMessage}</div>
-      <div>{errorMessage}</div>
+      {successMessage && <div>{successMessage}</div>}
+      {errorMessage && <div>{errorMessage}</div>}
     </div>
   );
 };

@@ -11,7 +11,9 @@ const ProductList = () => {
   const [successMessage, SetSuccessMessage] = useState('');
   const [errorMessage, SetErrorMessage] = useState('');
 
-  const { getSession, paymentMethodId } = useContext(AuthContext);
+  const { getSession, paymentMethodId, name, email, sub } = useContext(
+    AuthContext
+  );
 
   useEffect(() => {
     const updateProducts = async () => {
@@ -35,10 +37,29 @@ const ProductList = () => {
 
   const handleSubscription = async (successCb, errorCb) => {
     let subscriptionResult;
+
     try {
-      subscriptionResult = await PaymentService.createSubscription(
+      const createCustomerOptions = {
         token,
-        paymentMethodId
+        sub,
+        name,
+        email,
+      };
+      // If a stripe customer Id doesn't exist, create a customer
+      const customer = await PaymentService.createCustomer(
+        createCustomerOptions
+      );
+      console.log('customer', customer);
+      const customerId = customer.customerId;
+
+      const createSubscriptionOptions = {
+        token,
+        paymentMethodId,
+        customerId,
+      };
+
+      subscriptionResult = await PaymentService.createSubscription(
+        createSubscriptionOptions
       );
       if (subscriptionResult.hasOwnProperty('error')) {
         errorCb(subscriptionResult.error);
@@ -51,20 +72,21 @@ const ProductList = () => {
 
   return (
     <>
-      {products.map((product) => (
-        <div key={product.productName}>
-          <ProductCard {...product} />
-          <button
-            onClick={() =>
-              handleSubscription(SetSuccessMessage, SetErrorMessage)
-            }
-          >
-            Add to Cart
-          </button>
-        </div>
-      ))}
-      <div>{successMessage}</div>
-      <div>{errorMessage}</div>
+      {products &&
+        products.map((product) => (
+          <div key={product.productName}>
+            <ProductCard {...product} />
+            <button
+              onClick={() =>
+                handleSubscription(SetSuccessMessage, SetErrorMessage)
+              }
+            >
+              Add to Cart
+            </button>
+          </div>
+        ))}
+      {successMessage && <div>{successMessage}</div>}
+      {errorMessage && <div>{errorMessage}</div>}
     </>
   );
 };

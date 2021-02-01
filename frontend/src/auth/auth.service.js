@@ -38,6 +38,7 @@ const AuthService = {
       user.authenticateUser(authDetails, {
         onFailure: (err) => reject(err),
         onSuccess: (data) => {
+          console.log(data);
           resolve(data);
         },
       })
@@ -52,11 +53,13 @@ const AuthService = {
         return;
       }
 
+      const sub = user.getUsername();
+
       user.getSession(async (err, session) => {
         if (err) {
           reject(err);
         } else {
-          console.log('You have logged in!');
+          console.log('You have logged in!', session);
 
           const attributes = await new Promise((resolve, reject) => {
             user.getUserAttributes((err, attributes) => {
@@ -75,7 +78,7 @@ const AuthService = {
 
           const token = session.getIdToken().getJwtToken();
 
-          resolve({ session, attributes, user, token });
+          resolve({ session, attributes, user, token, sub });
         }
       });
     });
@@ -95,10 +98,10 @@ const AuthService = {
     });
   },
 
-  logout: () => {
-    const cognitoUser = UserPool.getCurrentUser();
-    if (cognitoUser) {
-      cognitoUser.logout();
+  signOut: () => {
+    const user = UserPool.getCurrentUser();
+    if (user) {
+      user.signOut();
     }
   },
 };

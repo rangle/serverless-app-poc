@@ -2,7 +2,9 @@ import { useContext, useEffect } from 'react';
 import { AuthContext } from '../auth/auth-context';
 
 const Navbar = () => {
-  const { getSession, name, setName, token } = useContext(AuthContext);
+  const { getSession, signOut, name, setName, token } = useContext(AuthContext);
+
+  console.log('token is', token);
 
   useEffect(() => {
     getSession().then(({ attributes, user }) => {
@@ -16,7 +18,7 @@ const Navbar = () => {
       {token && (
         <>
           <div>Welcome back {name}! </div>
-          <button>Sign out</button>
+          <button onClick={signOut}>Sign out</button>
         </>
       )}
 

@@ -15,7 +15,7 @@ export const saveUser = async (event, context) => {
   };
 
   try {
-    ddbResult = await dynamoDb.put(ddbParams).promise();
+    await dynamoDb.put(ddbParams).promise();
     console.log('Save user success');
     return message;
   } catch (err) {

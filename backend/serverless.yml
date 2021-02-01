@@ -63,6 +63,17 @@ functions:
     description: save user data to DynamoDB
     events:
       - sns: 'arn:aws:sns:us-east-1:242421767634:confirm-user-creation'
+  createCustomer:
+    handler: src/handler.createCustomer
+    events:
+      - http:
+          path: /customer
+          method: post
+          cors: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: ApiGatewayAuthorizer
   createSubscription:
     handler: src/handler.createSubscription
     events:

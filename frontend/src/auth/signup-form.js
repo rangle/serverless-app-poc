@@ -63,8 +63,8 @@ const SignUpForm = () => {
         />
         <input type="submit" />
       </form>
-      <div>{successMessage}</div>
-      <div>{errorMessage}</div>
+      {successMessage && <div>{successMessage}</div>}
+      {errorMessage && <div>{errorMessage}</div>}
     </div>
   );
 };
