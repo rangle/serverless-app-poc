@@ -14,15 +14,14 @@ const CreditCardForm = () => {
   const stripe = useStripe();
   const elements = useElements();
 
-  const { errorMessage, setErrorMessage } = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const { setPaymentMethodId } = useContext(AuthContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!stripe || !elements) {
-      // Stripe.js has not loaded yet. Make sure to disable
-      // form submission until Stripe.js has loaded.
       return;
     }
 
@@ -37,10 +36,14 @@ const CreditCardForm = () => {
 
     if (error) {
       console.log('[error]', error);
-      // setErrorMessage(error.message);
+      setErrorMessage(error.message);
     }
 
     console.log('[PaymentMethod]', paymentMethod);
+
+    setSuccessMessage(
+      `create payment method ${paymentMethod.id} successfully!`
+    );
 
     setPaymentMethodId(paymentMethod.id);
   };
@@ -51,6 +54,8 @@ const CreditCardForm = () => {
       <button type="submit" disabled={!stripe}>
         Pay
       </button>
+      {errorMessage && <div>Error: {errorMessage}</div>}
+      {successMessage && <div>Success: {successMessage}</div>}
     </form>
   );
 };
