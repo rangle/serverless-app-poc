@@ -1,19 +1,27 @@
 import ProductList from './products/product-list';
+import { Switch, Route } from 'react-router-dom';
 import SignUpForm from './auth/signup-form';
 import SignInForm from './auth/signin-form';
-import Navbar from './app-shell/navbar';
 import Checkout from './payment/checkout';
-import { AuthProvider } from './auth/auth-context';
-
+import AppShell from './app-shell/app-shell';
 const App = () => {
   return (
-    <AuthProvider>
-      <Navbar />
-      <SignUpForm />
-      <SignInForm />
-      <ProductList />
-      <Checkout />
-    </AuthProvider>
+    <AppShell>
+      <Switch>
+        <Route exact path="/">
+          <ProductList />
+        </Route>
+        <Route path="/sign-in">
+          <SignInForm />
+        </Route>
+        <Route path="/sign-up">
+          <SignUpForm />
+        </Route>
+        <Route path="/checkout">
+          <Checkout />
+        </Route>
+      </Switch>
+    </AppShell>
   );
 };
 

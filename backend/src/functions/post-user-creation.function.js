@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-const sns = new AWS.SNS({ apiVersion: '2012-08-10' });
+const sns = new AWS.SNS();
 
 export const postUserCreation = async (event, context) => {
   console.log('event', event);

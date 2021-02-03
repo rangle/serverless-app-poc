@@ -1,5 +1,5 @@
 import AWS from 'aws-sdk';
-const dynamoDb = new AWS.DynamoDB.DocumentClient({ apiVersion: '2020-03-02' });
+const dynamoDb = new AWS.DynamoDB.DocumentClient();
 export const saveUser = async (event, context) => {
   // Parse cognito user data from the sns message
   const message = event.Records[0].Sns.Message;
