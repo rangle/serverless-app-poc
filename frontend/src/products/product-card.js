@@ -1,10 +1,11 @@
+import { StyledCardHeader } from '../components/card';
 const ProductCard = ({ productName, productDescription, price }) => {
   return (
-    <div>
-      <h1>{productName}</h1>
+    <>
+      <StyledCardHeader>{productName}</StyledCardHeader>
       <p>{productDescription}</p>
-      <p>Price: ${price}</p>
-    </div>
+      <p>CA${price}</p>
+    </>
   );
 };
 

@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
-const s3 = new AWS.S3({ apiVersion: '2012-08-10' });
-const ses = new AWS.SES({ apiVersion: '2012-08-10' });
+const s3 = new AWS.S3();
+const ses = new AWS.SES();
 
 export const notifyInvoicePaid = async (req, context) => {
   try {

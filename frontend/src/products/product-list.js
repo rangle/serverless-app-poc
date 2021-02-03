@@ -3,6 +3,9 @@ import { AuthContext } from '../auth/auth-context';
 import ContentService from '../content/content.service';
 import PaymentService from '../payment/payment.service';
 import ProductCard from './product-card';
+import { Button } from '../components/button';
+import { StyledCard } from '../components/card';
+import { StyledListContainer } from '../components/common-styles';
 
 const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -49,7 +52,7 @@ const ProductList = () => {
       const customer = await PaymentService.createCustomer(
         createCustomerOptions
       );
-      console.log('customer', customer);
+
       const customerId = customer.customerId;
 
       const createSubscriptionOptions = {
@@ -71,23 +74,23 @@ const ProductList = () => {
   };
 
   return (
-    <>
+    <StyledListContainer>
       {products &&
         products.map((product) => (
-          <div key={product.productName}>
+          <StyledCard key={product.productName}>
             <ProductCard {...product} />
-            <button
+            <Button
               onClick={() =>
                 handleSubscription(SetSuccessMessage, SetErrorMessage)
               }
             >
               Add to Cart
-            </button>
-          </div>
+            </Button>
+          </StyledCard>
         ))}
       {successMessage && <div>{successMessage}</div>}
       {errorMessage && <div>{errorMessage}</div>}
-    </>
+    </StyledListContainer>
   );
 };
 

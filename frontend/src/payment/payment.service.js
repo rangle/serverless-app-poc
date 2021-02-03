@@ -22,7 +22,6 @@ const PaymentService = {
   createSubscription: async (createSubscriptionOptions) => {
     const { token, paymentMethodId, customerId } = createSubscriptionOptions;
     const priceId = 'price_1Hgbz3HeCPeFIGDDI2RSPHB3';
-    // const customerId = 'cus_IHAIpndpVfxujF';
     const subscription = await fetch(STRIPE_SUBSCRIPTION_URL, {
       method: 'POST',
       headers: {

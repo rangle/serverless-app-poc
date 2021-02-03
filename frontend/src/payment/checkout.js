@@ -8,6 +8,19 @@ import { useState, useContext } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { AuthContext } from '../auth/auth-context';
 
+import {
+  StyledHeader,
+  StyledSubHeader,
+  StyledFlexContainer,
+} from '../components/common-styles';
+import {
+  StyledFormContainer,
+  StyledError,
+  StyledSuccessMessage,
+} from '../components/form';
+
+import { FormButton } from '../components/button';
+
 const stripePromise = loadStripe('pk_test_mzwA5AWnlSi7uBnrCNZ0MWpu00ECzhqFsH');
 
 const CreditCardForm = () => {
@@ -49,25 +62,30 @@ const CreditCardForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <StyledFormContainer onSubmit={handleSubmit}>
       <CardElement />
-      <button type="submit" disabled={!stripe}>
-        Pay
-      </button>
-      {errorMessage && <div>Error: {errorMessage}</div>}
-      {successMessage && <div>Success: {successMessage}</div>}
-    </form>
+      <FormButton
+        type="submit"
+        disabled={!stripe}
+        value="Subscribe for 30-day access"
+      />
+      {errorMessage && <StyledError>Error: {errorMessage}</StyledError>}
+      {successMessage && (
+        <StyledSuccessMessage>Success: {successMessage}</StyledSuccessMessage>
+      )}
+    </StyledFormContainer>
   );
 };
 
 const Checkout = () => {
   return (
-    <Elements stripe={stripePromise}>
-      <>
-        <h1>Checkout Page</h1>
+    <StyledFlexContainer>
+      <StyledHeader>Payment</StyledHeader>
+      <StyledSubHeader>Amount to pay $59.00</StyledSubHeader>
+      <Elements stripe={stripePromise}>
         <CreditCardForm />
-      </>
-    </Elements>
+      </Elements>
+    </StyledFlexContainer>
   );
 };
 
