@@ -5,7 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import Theme from './theme';
 import { AuthProvider } from './auth/auth-context';
 import { ContentProvider } from './content/content-context';
-import App from './app';
+import App from './App';
 import './index.css';
 
 ReactDOM.render(
