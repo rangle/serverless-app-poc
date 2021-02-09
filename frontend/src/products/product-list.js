@@ -1,95 +1,58 @@
 import { useState, useEffect, useContext } from 'react';
-import { AuthContext } from '../auth/auth-context';
-import ContentService from '../content/content.service';
-import PaymentService from '../payment/payment.service';
+import { useHistory } from 'react-router-dom';
 import ProductCard from './product-card';
 import { Button } from '../components/button';
 import { StyledCard } from '../components/card';
-import { StyledListContainer } from '../components/common-styles';
+import { StyledListContainer } from '../components/common';
+import { ContentContext } from '../content/content-context';
+import { getProductDetails } from '../content/content.service';
 
 const ProductList = () => {
-  const [products, setProducts] = useState([]);
-  const [token, setToken] = useState('');
-
-  const [successMessage, SetSuccessMessage] = useState('');
-  const [errorMessage, SetErrorMessage] = useState('');
-
-  const { getSession, paymentMethodId, name, email, sub } = useContext(
-    AuthContext
-  );
+  const [isLoading, setIsLoading] = useState(false);
+  const { contentState, dispatch } = useContext(ContentContext);
+  const { products } = contentState;
+  const history = useHistory();
 
   useEffect(() => {
     const updateProducts = async () => {
-      const productDetails = await ContentService.getProductDetails();
-      setProducts(productDetails);
+      setIsLoading(true);
+      try {
+        const productDetails = await getProductDetails();
+        return dispatch({
+          type: 'FETCH_PRODUCTS',
+          payload: productDetails,
+        });
+      } catch (err) {
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     updateProducts();
   }, []);
 
-  useEffect(() => {
-    const updateToken = async () => {
-      const session = await getSession();
-      if (session) {
-        setToken(session.token);
-      }
-    };
-
-    updateToken();
-  }, []);
-
-  const handleSubscription = async (successCb, errorCb) => {
-    let subscriptionResult;
-
-    try {
-      const createCustomerOptions = {
-        token,
-        sub,
-        name,
-        email,
-      };
-      // If a stripe customer Id doesn't exist, create a customer
-      const customer = await PaymentService.createCustomer(
-        createCustomerOptions
-      );
-
-      const customerId = customer.customerId;
-
-      const createSubscriptionOptions = {
-        token,
-        paymentMethodId,
-        customerId,
-      };
-
-      subscriptionResult = await PaymentService.createSubscription(
-        createSubscriptionOptions
-      );
-      if (subscriptionResult.hasOwnProperty('error')) {
-        errorCb(subscriptionResult.error);
-      }
-      successCb(subscriptionResult.message);
-    } catch (error) {
-      errorCb(error.message);
-    }
+  const handleSelectedProduct = async (selectedProduct) => {
+    console.log('hello', selectedProduct);
+    dispatch({
+      type: 'SELECT_PRODUCT',
+      payload: selectedProduct,
+    });
+    history.push('/checkout');
   };
 
   return (
     <StyledListContainer>
+      {isLoading && <div>Loading...</div>}
       {products &&
         products.map((product) => (
           <StyledCard key={product.productName}>
             <ProductCard {...product} />
-            <Button
-              onClick={() =>
-                handleSubscription(SetSuccessMessage, SetErrorMessage)
-              }
-            >
+            <Button onClick={() => handleSelectedProduct(product)}>
               Add to Cart
             </Button>
           </StyledCard>
         ))}
-      {successMessage && <div>{successMessage}</div>}
-      {errorMessage && <div>{errorMessage}</div>}
     </StyledListContainer>
   );
 };

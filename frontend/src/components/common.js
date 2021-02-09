@@ -8,20 +8,11 @@ export const StyledAppContainer = styled('div')(
 `
 );
 
-export const StyledFlexContainer = styled('div')(
-  ({ theme }) => `
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
-`
-);
-
 export const StyledListContainer = styled('div')(
   ({ theme }) => `
   display: flex;
   padding: 40px;
+  flex-wrap: wrap;
 `
 );
 

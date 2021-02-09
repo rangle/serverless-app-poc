@@ -4,7 +4,7 @@ export const StyledCard = styled('div')(
   ({ theme }) => `
   color: ${theme.colors.dark};
   margin: 20px;
-  width: 320px;
+  width: 300px;
   overflow: hidden;
   background: #fff;
   box-shadow: ${theme.shadow['01']};

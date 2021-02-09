@@ -1,35 +1,54 @@
-import { createContext, useState } from 'react';
-import AuthService from './auth.service';
+import { createContext, useReducer } from 'react';
 
 const AuthContext = createContext();
 
+const initialState = {
+  isSignedIn: false,
+  authUserId: '', // cognito user Id
+  name: '',
+  email: '',
+  token: '', // cognito ID token
+  paymentMethodId: '', // stripe payment method Id
+  paymentCustomerId: '', // stripe customer Id
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    // Update auth state with Cognito authUserId, name and email from Cognito session
+    case 'SIGN_IN':
+      return {
+        ...state,
+        isSignedIn: true,
+        ...action.payload,
+      };
+    // Fetch user account info (paymentCustomerId and paymentMethodId) from DynamoDB
+    case 'FETCH_ACCOUNT':
+      return {
+        ...state,
+        ...action.payload,
+      };
+    case 'SET_PAYMENT_METHOD':
+      return {
+        ...state,
+        paymentMethodId: action.payload,
+      };
+    case 'SET_CUSTOMER_ID':
+      return {
+        ...state,
+        paymentCustomerId: action.payload,
+      };
+    case 'SIGN_OUT':
+      return state;
+    default:
+      return state;
+  }
+};
+
 const AuthProvider = (props) => {
-  const [name, setName] = useState('Guest');
-  const [sub, setSub] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [token, setToken] = useState(null);
-  const [paymentMethodId, setPaymentMethodId] = useState('');
-
-  console.log('sub is', sub);
-
-  const contextValue = {
-    sub,
-    name,
-    email,
-    token,
-    paymentMethodId,
-    setSub,
-    setName,
-    setEmail,
-    setToken,
-    setPaymentMethodId,
-    ...AuthService,
-  };
-
+  const [authState, dispatch] = useReducer(reducer, initialState);
+  const value = { authState, dispatch };
   return (
-    <AuthContext.Provider value={contextValue}>
-      {props.children}
-    </AuthContext.Provider>
+    <AuthContext.Provider value={value}>{props.children}</AuthContext.Provider>
   );
 };
 

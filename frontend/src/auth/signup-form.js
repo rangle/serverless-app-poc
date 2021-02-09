@@ -1,99 +1,91 @@
 import { useState, useContext } from 'react';
 import { AuthContext } from './auth-context';
-import { CognitoUserAttribute } from 'amazon-cognito-identity-js';
-import {
-  StyledHeader,
-  StyledSubHeader,
-  StyledFlexContainer,
-} from '../components/common-styles';
+import { signUp } from '../auth/auth.service';
+import { StyledHeader, StyledSubHeader } from '../components/common';
 import {
   StyledFormContainer,
+  StyledForm,
   StyledFormItem,
   StyledFormLabel,
   StyledFormInput,
-  StyledError,
+  StyledErrorMessage,
   StyledSuccessMessage,
 } from '../components/form';
-
 import { FormButton } from '../components/button';
 
 const SignUpForm = () => {
-  const [name, setUserName] = useState('');
-  const [email, setUserEmail] = useState('');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const { signUp, getSession, setToken, setName, setEmail } = useContext(
-    AuthContext
-  );
-
-  const attributeEmail = new CognitoUserAttribute({
-    Name: 'email',
-    Value: email,
-  });
-  const attributeName = new CognitoUserAttribute({
-    Name: 'name',
-    Value: name,
-  });
-
   const handleSignUp = async (e) => {
     e.preventDefault();
-    let signUpResult;
+    setIsLoading(true);
     try {
-      signUpResult = await signUp({
+      const signUpResult = await signUp({
         name,
         email,
         password,
-        attributeEmail,
-        attributeName,
       });
-      setSuccessMessage('Sign up successfully!');
+
+      setSuccessMessage(
+        `Sign up successfully! Please check with your email ${email} to confirm your registration.`
+      );
     } catch (error) {
       setErrorMessage(error.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <StyledFlexContainer>
+    <StyledFormContainer>
       <StyledHeader>New to BiteTut?</StyledHeader>
       <StyledSubHeader>Sign up for your BiteTut Account</StyledSubHeader>
-      <StyledFormContainer onSubmit={handleSignUp}>
+      <StyledForm onSubmit={handleSignUp}>
         <StyledFormItem>
           <StyledFormLabel for="name">Full Name</StyledFormLabel>
           <StyledFormInput
             type="text"
+            id="name"
             value={name}
             placeholder="Name"
-            onChange={(e) => setUserName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
           />
         </StyledFormItem>
         <StyledFormItem>
           <StyledFormLabel for="email">Email</StyledFormLabel>
           <StyledFormInput
             type="email"
+            id="email"
             value={email}
             placeholder="Email"
-            onChange={(e) => setUserEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </StyledFormItem>
         <StyledFormItem>
           <StyledFormLabel for="password">Password</StyledFormLabel>
           <StyledFormInput
             type="password"
+            id="password"
             value={password}
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
           />
         </StyledFormItem>
 
-        <FormButton type="submit" value="Sign Up" />
+        <FormButton type="submit" value="Sign Up" disabled={isLoading} />
         {successMessage && (
           <StyledSuccessMessage>{successMessage}</StyledSuccessMessage>
         )}
-        {errorMessage && <StyledError>{errorMessage}</StyledError>}
-      </StyledFormContainer>
-    </StyledFlexContainer>
+        {errorMessage && (
+          <StyledErrorMessage>{errorMessage}</StyledErrorMessage>
+        )}
+      </StyledForm>
+    </StyledFormContainer>
   );
 };
 

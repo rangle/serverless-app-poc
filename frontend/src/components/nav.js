@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const StyledNav = styled('nav')(
+export const StyledNav = styled('nav')(
   ({ theme }) => `
   position: relative;
   height: 50px;
@@ -13,7 +13,7 @@ const StyledNav = styled('nav')(
 `
 );
 
-const StyledHeader = styled('h1')(
+export const StyledNavHeader = styled('h1')(
   ({ theme }) => `
   color: ${theme.colors.blue};
   font-style: normal;
@@ -24,7 +24,7 @@ const StyledHeader = styled('h1')(
 `
 );
 
-const StyledUserMenu = styled('div')(
+export const StyledUserMenu = styled('div')(
   ({ theme }) => `
   display: flex;
   flex-direction: row;
@@ -33,12 +33,3 @@ const StyledUserMenu = styled('div')(
   font-size: ${theme.fontSizes.medium};
 `
 );
-
-const Nav = ({ children }) => (
-  <StyledNav>
-    <StyledHeader>BiteTut</StyledHeader>
-    <StyledUserMenu>{children}</StyledUserMenu>
-  </StyledNav>
-);
-
-export default Nav;
