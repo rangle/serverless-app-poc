@@ -25,13 +25,6 @@ export const signUp = (signUpOptions) => {
         if (err) {
           reject(err);
         }
-
-        // ISignUpResult {
-        // 	user: CognitoUser;
-        // 	userConfirmed: boolean;
-        // 	userSub: string;
-        // 	codeDeliveryDetails: CodeDeliveryDetails;
-        // }
         resolve(signUpResult);
       }
     );
@@ -95,20 +88,27 @@ export const signOut = () => {
   }
 };
 
-export const getAuthUser = async () => {
-  try {
+export const getAuthUser = () => {
+  return new Promise(async (resolve, reject) => {
     const user = UserPool.getCurrentUser();
-    const authUserId = user.getUsername();
-    const attributes = await getUserAttributes(user);
-    const session = await getUserSession(user);
-    const token = session.getIdToken().getJwtToken();
 
-    return {
-      authUserId,
-      attributes,
-      token,
-    };
-  } catch (err) {
-    throw err;
-  }
+    if (!user) {
+      return;
+    }
+
+    try {
+      const session = await getUserSession(user);
+      const token = session.getIdToken().getJwtToken();
+      const authUserId = user.getUsername();
+      const attributes = await getUserAttributes(user);
+
+      resolve({
+        authUserId,
+        attributes,
+        token,
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
 };

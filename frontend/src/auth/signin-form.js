@@ -24,8 +24,8 @@ const SignInForm = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const updateUser = () => {
-    const { attributes, token, authUserId } = getAuthUser();
+  const updateUser = async() => {
+    const { attributes, token, authUserId } = await getAuthUser();
     const authPayload = {
       name: attributes.name,
       email: attributes.email,
@@ -56,7 +56,7 @@ const SignInForm = () => {
       <StyledSubHeader>Sign in to your BiteTut Account</StyledSubHeader>
       <StyledForm onSubmit={handleSignIn}>
         <StyledFormItem>
-          <StyledFormLabel for="email">Email</StyledFormLabel>
+          <StyledFormLabel htmlFor="email">Email</StyledFormLabel>
           <StyledFormInput
             type="email"
             id="email"
@@ -66,7 +66,7 @@ const SignInForm = () => {
           />
         </StyledFormItem>
         <StyledFormItem>
-          <StyledFormLabel for="password">Password</StyledFormLabel>
+          <StyledFormLabel htmlFor="password">Password</StyledFormLabel>
           <StyledFormInput
             type="password"
             id="password"

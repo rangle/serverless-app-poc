@@ -10,6 +10,7 @@ const UserMenu = () => {
   const handleSignOut = () => {
     // Sign out from cognito session - clear local storage credential
     signOut();
+    // Clear AuthState
     return dispatch({
       type: 'SIGN_OUT',
     });
@@ -20,7 +21,7 @@ const UserMenu = () => {
       {isSignedIn && (
         <>
           <div>{name}</div>
-          <LinkButton onClick={handleSignOut}>Sign out</LinkButton>
+          <LinkButton to="/sign-in" onClick={handleSignOut}>Sign out</LinkButton>
         </>
       )}
 

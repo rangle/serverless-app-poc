@@ -38,7 +38,7 @@ const reducer = (state, action) => {
         paymentCustomerId: action.payload,
       };
     case 'SIGN_OUT':
-      return state;
+      return initialState;
     default:
       return state;
   }

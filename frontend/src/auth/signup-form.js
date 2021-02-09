@@ -47,7 +47,7 @@ const SignUpForm = () => {
       <StyledSubHeader>Sign up for your BiteTut Account</StyledSubHeader>
       <StyledForm onSubmit={handleSignUp}>
         <StyledFormItem>
-          <StyledFormLabel for="name">Full Name</StyledFormLabel>
+          <StyledFormLabel htmlFor="name">Full Name</StyledFormLabel>
           <StyledFormInput
             type="text"
             id="name"
@@ -57,7 +57,7 @@ const SignUpForm = () => {
           />
         </StyledFormItem>
         <StyledFormItem>
-          <StyledFormLabel for="email">Email</StyledFormLabel>
+          <StyledFormLabel htmlFor="email">Email</StyledFormLabel>
           <StyledFormInput
             type="email"
             id="email"
@@ -67,7 +67,7 @@ const SignUpForm = () => {
           />
         </StyledFormItem>
         <StyledFormItem>
-          <StyledFormLabel for="password">Password</StyledFormLabel>
+          <StyledFormLabel htmlFor="password">Password</StyledFormLabel>
           <StyledFormInput
             type="password"
             id="password"
