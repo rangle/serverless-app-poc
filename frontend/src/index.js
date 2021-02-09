@@ -1,19 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
-import './index.css';
-import App from './app';
 import reportWebVitals from './reportWebVitals';
-import { AuthProvider } from './auth/auth-context';
 import Theme from './theme';
+import { AuthProvider } from './auth/auth-context';
+import { ContentProvider } from './content/content-context';
+import App from './app';
+import './index.css';
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
       <AuthProvider>
-        <Theme>
-          <App />
-        </Theme>
+        <ContentProvider>
+          <Theme>
+            <App />
+          </Theme>
+        </ContentProvider>
       </AuthProvider>
     </Router>
   </React.StrictMode>,

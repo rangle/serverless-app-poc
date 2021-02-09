@@ -1,12 +1,11 @@
-import Nav from '../components/nav';
-import { StyledAppContainer } from '../components/common-styles';
+import { StyledAppContainer } from '../components/common';
 import Navbar from './navbar';
-
+import UserMenu from './user-menu';
 const AppShell = ({ children }) => (
   <StyledAppContainer>
-    <Nav>
-      <Navbar />
-    </Nav>
+    <Navbar>
+      <UserMenu />
+    </Navbar>
     {children}
   </StyledAppContainer>
 );

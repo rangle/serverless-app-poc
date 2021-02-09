@@ -1,6 +1,16 @@
 import styled from 'styled-components';
 
-export const StyledFormContainer = styled('form')(
+export const StyledFormContainer = styled('div')(
+  ({ theme }) => `
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+`
+);
+
+export const StyledForm = styled('form')(
   ({ theme }) => `
   font-weight: normal;
   margin: 20px;
@@ -49,7 +59,7 @@ export const StyledFormInput = styled('input')(
 `
 );
 
-export const StyledError = styled('div')(
+export const StyledErrorMessage = styled('div')(
   ({ theme }) => `
   color: ${theme.colors['text-alert']};
   margin: 30px 0 0;

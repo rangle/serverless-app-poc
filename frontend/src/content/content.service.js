@@ -1,19 +1,15 @@
 import { contentfulClient } from './contentful-client';
 
-const ContentService = {
-  getItems: async (contentType) => {
-    const entries = await contentfulClient.getEntries({
-      content_type: contentType,
-    });
+export const getItems = async (contentType) => {
+  const entries = await contentfulClient.getEntries({
+    content_type: contentType,
+  });
 
-    return entries.items || [];
-  },
-
-  getProductDetails: async () => {
-    const products = await ContentService.getItems('product');
-
-    return products.map((product) => product.fields);
-  },
+  return entries.items || [];
 };
 
-export default ContentService;
+export const getProductDetails = async () => {
+  const products = await getItems('product');
+
+  return products.map((product) => product.fields);
+};

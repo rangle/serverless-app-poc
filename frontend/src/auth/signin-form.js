@@ -1,76 +1,75 @@
 import { useState, useContext } from 'react';
+import { useHistory } from 'react-router-dom';
 import { AuthContext } from './auth-context';
-import {
-  StyledHeader,
-  StyledSubHeader,
-  StyledFlexContainer,
-} from '../components/common-styles';
+import { authenticate, getAuthUser } from '../auth/auth.service';
+import { StyledHeader, StyledSubHeader } from '../components/common';
 import {
   StyledFormContainer,
+  StyledForm,
   StyledFormItem,
   StyledFormLabel,
   StyledFormInput,
-  StyledError,
+  StyledErrorMessage,
   StyledSuccessMessage,
 } from '../components/form';
 
 import { FormButton } from '../components/button';
+
 const SignInForm = () => {
-  const [email, setSignInEmail] = useState('');
+  const { dispatch } = useContext(AuthContext);
+  const history = useHistory();
+
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const {
-    authenticate,
-    getSession,
-    setSub,
-    setToken,
-    setName,
-    setEmail,
-  } = useContext(AuthContext);
-
-  const updateAuthContext = async () => {
-    try {
-      const { attributes, token, sub } = await getSession();
-      setSub(sub);
-      setToken(token);
-      setName(attributes.name);
-      setEmail(attributes.email);
-    } catch (error) {
-      throw error;
-    }
+  const updateUser = async() => {
+    const { attributes, token, authUserId } = await getAuthUser();
+    const authPayload = {
+      name: attributes.name,
+      email: attributes.email,
+      authUserId,
+      token,
+    };
+    return dispatch({
+      type: 'SIGN_IN',
+      payload: authPayload,
+    });
   };
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     try {
       await authenticate({ email, password });
-      await updateAuthContext();
+      updateUser();
       setSuccessMessage('Sign in success!');
+      history.push('/');
     } catch (error) {
       setErrorMessage(error.message);
     }
   };
 
   return (
-    <StyledFlexContainer>
+    <StyledFormContainer>
       <StyledHeader>Welcome Back!</StyledHeader>
       <StyledSubHeader>Sign in to your BiteTut Account</StyledSubHeader>
-      <StyledFormContainer onSubmit={handleSignIn}>
+      <StyledForm onSubmit={handleSignIn}>
         <StyledFormItem>
-          <StyledFormLabel for="email">Email</StyledFormLabel>
+          <StyledFormLabel htmlFor="email">Email</StyledFormLabel>
           <StyledFormInput
             type="email"
+            id="email"
             value={email}
             placeholder="Email"
-            onChange={(e) => setSignInEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </StyledFormItem>
         <StyledFormItem>
-          <StyledFormLabel for="password">Password</StyledFormLabel>
+          <StyledFormLabel htmlFor="password">Password</StyledFormLabel>
           <StyledFormInput
             type="password"
+            id="password"
             value={password}
             placeholder="Password"
             onChange={(e) => setPassword(e.target.value)}
@@ -81,9 +80,11 @@ const SignInForm = () => {
         {successMessage && (
           <StyledSuccessMessage>{successMessage}</StyledSuccessMessage>
         )}
-        {errorMessage && <StyledError>{errorMessage}</StyledError>}
-      </StyledFormContainer>
-    </StyledFlexContainer>
+        {errorMessage && (
+          <StyledErrorMessage>{errorMessage}</StyledErrorMessage>
+        )}
+      </StyledForm>
+    </StyledFormContainer>
   );
 };
 
