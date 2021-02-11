@@ -14,21 +14,21 @@ BiteTut is a serverless e-commerce storefront that provides subscription-based o
 
 ### Contentful Account
 
-1. sign up for a Contentful account
-2. create an empty Space to hold your content
-3. set up content model
-4. configure the [Contentful Javascript SDK](https://github.com/contentful/contentful.js/#configuration) using your set of the access token and space ID
+1. Sign up for a Contentful account
+2. Create an empty Space to hold your content
+3. Set up content model
+4. Configure the [Contentful Javascript SDK](https://github.com/contentful/contentful.js/#configuration) using your set of the access token and space ID
 
 ### Stripe account
 
-1. sign up for a Stripe account
-2. obtain the [Stripe API keys](https://stripe.com/docs/keys)
+1. Sign up for a Stripe account
+2. Obtain the [Stripe API keys](https://stripe.com/docs/keys)
 
 ### AWS account
 
-1. sign up for an AWS account
-2. create an IAM User and Access Key
-3. set up credential [with AWS CLI](https://github.com/serverless/serverless/blob/master/docs/providers/aws/guide/credentials.md#setup-with-the-aws-cli)
+1. Sign up for an AWS account
+2. Create an IAM User and Access Key
+3. Set up credential [with AWS CLI](https://github.com/serverless/serverless/blob/master/docs/providers/aws/guide/credentials.md#setup-with-the-aws-cli)
 
 ## Get Started
 
@@ -65,11 +65,11 @@ yarn dev
 .
 ├── frontend                    # ReactJS application
 │   ├── src
-│		│   ├── components          # styled-components
-│		│   ├── content             # content service, contentful config
-│		│   ├── payment             # payment service with Stripe
-│		│   ├── auth                # auth service with Cognito, auth context
-│		│   ├── theme               # theme config for styled-components
+│   │   ├── components          # styled-components
+│   │   ├── content             # content service, contentful config
+│   │   ├── payment             # payment service with Stripe
+│   │   ├── auth                # auth service with Cognito, auth context
+│   │   ├── theme               # theme config for styled-components
 │   │   └── ...
 │   └── ...
 ├── backend                     # Serverless backend

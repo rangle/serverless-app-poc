@@ -1,7 +1,7 @@
 import { StyledNav, StyledNavHeader, StyledUserMenu } from '../components/nav';
 const Navbar = ({ children }) => (
   <StyledNav>
-    <StyledNavHeader>BiteTut</StyledNavHeader>
+    <StyledNavHeader to="/">BiteTut</StyledNavHeader>
     <StyledUserMenu>{children}</StyledUserMenu>
   </StyledNav>
 );
