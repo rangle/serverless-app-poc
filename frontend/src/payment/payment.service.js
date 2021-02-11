@@ -1,4 +1,5 @@
-import { STRIPE_SUBSCRIPTION_URL, STRIPE_CUSTOMER_URL } from '../api/constants';
+import { STRIPE_SUBSCRIPTION_URL, STRIPE_CUSTOMER_URL, DB_USER_URL } from '../api/constants';
+
 
 /** Create a customer in Stripe, return customerID */
 export const createCustomer = async (customerDetails) => {
@@ -35,4 +36,20 @@ export const createSubscription = async (subscriptionDetails) => {
     }),
   });
   return subscription.json();
+};
+
+/** Fetch user account from DynamoDB */
+export const getUserAccount = async (token, authUserId) => {
+  try {
+    const userResult = await fetch(`${DB_USER_URL}/${authUserId}`, {
+      headers: {
+        Authorization: token,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return userResult.json();
+  } catch (err) {
+    throw err;
+  }
 };
