@@ -8,6 +8,8 @@ const initialState = {
   name: '',
   email: '',
   token: '', // cognito ID token
+  // customerId: '', // stripe customer ID
+  // paymentLast4: '', // last 4 digits of the default payment method if there is any
 };
 
 const reducer = (state, action) => {

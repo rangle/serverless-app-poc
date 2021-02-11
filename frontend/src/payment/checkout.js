@@ -29,6 +29,7 @@ const CreditCardForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+
   const { authState } = useContext(AuthContext);
   const { contentState } = useContext(ContentContext);
 
@@ -95,12 +96,13 @@ const CreditCardForm = () => {
           token,
           authUserId
         });
-      }
-      if (!paymentMethodId) {
+
         const cardElement = elements.getElement(CardElement);
         paymentMethodId = await addPaymentMethod(cardElement);
       }
-      await addSubscription(authState.token, paymentMethodId, paymentCustomerId);
+
+      addSubscription(authState.token, paymentMethodId, paymentCustomerId)
+
       setSuccessMessage('Create subscription successfully!');
     } catch (err) {
       setErrorMessage('Failed to create subscription...', err);
