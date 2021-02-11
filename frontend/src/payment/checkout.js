@@ -5,6 +5,7 @@ import {
   useStripe,
 } from '@stripe/react-stripe-js';
 import { useState, useContext } from 'react';
+import { Redirect } from 'react-router-dom'
 import { loadStripe } from '@stripe/stripe-js';
 import { AuthContext } from '../auth/auth-context';
 import { ContentContext } from '../content/content-context';
@@ -20,82 +21,58 @@ import { FormButton } from '../components/button';
 
 import { createCustomer, createSubscription } from '../payment/payment.service';
 
-const stripePromise = loadStripe('pk_test_mzwA5AWnlSi7uBnrCNZ0MWpu00ECzhqFsH');
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
 const CreditCardForm = () => {
   const stripe = useStripe();
   const elements = useElements();
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const { authState, dispatch } = useContext(AuthContext);
+  const { authState } = useContext(AuthContext);
   const { contentState } = useContext(ContentContext);
+
   const { selectedProducts } = contentState;
   const {
-    paymentMethodId,
-    paymentCustomerId,
     name,
     email,
     token,
     authUserId,
   } = authState;
+  const { productName } = selectedProducts[0];
 
-  console.log('credential', authState);
-  console.log('selected', selectedProducts);
-
-  const updatePaymentMethod = async (card) => {
+  const addPaymentMethod = async (card) => {
     try {
-      const { error, paymentMethod } = await stripe.createPaymentMethod({
+      const { paymentMethod } = await stripe.createPaymentMethod({
         type: 'card',
         card,
       });
 
-      if (error) {
-        throw error;
-      }
-
-      dispatch({
-        type: 'SET_PAYMENT_METHOD',
-        payload: paymentMethod.id,
-      });
-      // TODO: Update to DynamoDB
+      return paymentMethod.id
     } catch (err) {
       throw err;
     }
   };
 
-  const updateCustomer = async () => {
+  const addCustomer = async (customerDetails) => {
     try {
-      const createCustomerOptions = {
-        name,
-        email,
-        token,
-        authUserId,
-      };
-      // If a stripe customer Id doesn't exist, create a customer
-      const customer = await createCustomer(createCustomerOptions);
-
-      dispatch({
-        type: 'SET_CUSTOMER_ID',
-        payload: customer.customerId,
-      });
-      // TODO: Update to DynamoDB
+      const customerResult = await createCustomer(customerDetails);
+      return customerResult.customerId;
     } catch (err) {
       throw err;
     }
   };
 
-  const addSubscription = async () => {
+  const addSubscription = async (token, paymentMethodId, paymentCustomerId) => {
     try {
       const createSubscriptionOptions = {
         token,
         paymentMethodId,
-        paymentCustomerId,
+        customerId: paymentCustomerId,
       };
-
       await createSubscription(createSubscriptionOptions);
-      setSuccessMessage('Create subscription successfully!');
     } catch (err) {
-      setErrorMessage('Failed to create subscription...', err);
+      throw err;
     }
   };
 
@@ -106,16 +83,30 @@ const CreditCardForm = () => {
       return;
     }
 
-    if (!paymentCustomerId) {
-      updateCustomer();
-    }
+    let paymentCustomerId;
+    let paymentMethodId;
 
-    if (!paymentMethodId) {
-      const cardElement = elements.getElement(CardElement);
-      await updatePaymentMethod(cardElement);
+    try {
+      setIsLoading(true);
+      if (!paymentCustomerId) {
+        paymentCustomerId = await addCustomer({
+          name,
+          email,
+          token,
+          authUserId
+        });
+      }
+      if (!paymentMethodId) {
+        const cardElement = elements.getElement(CardElement);
+        paymentMethodId = await addPaymentMethod(cardElement);
+      }
+      await addSubscription(authState.token, paymentMethodId, paymentCustomerId);
+      setSuccessMessage('Create subscription successfully!');
+    } catch (err) {
+      setErrorMessage('Failed to create subscription...', err);
+    } finally {
+      setIsLoading(false);
     }
-
-    await addSubscription();
   };
 
   return (
@@ -126,6 +117,9 @@ const CreditCardForm = () => {
         disabled={!stripe}
         value="Subscribe for 30-day access"
       />
+      {isLoading && (
+        <StyledSuccessMessage>Creating subscription for {productName}...</StyledSuccessMessage>
+      )}
       {errorMessage && (
         <StyledErrorMessage>Error: {errorMessage}</StyledErrorMessage>
       )}
@@ -137,10 +131,27 @@ const CreditCardForm = () => {
 };
 
 const Checkout = () => {
+  const { contentState } = useContext(ContentContext);
+  const { authState } = useContext(AuthContext);
+
+  const { selectedProducts } = contentState;
+  const { isSignedIn } = authState;
+
+  if (!isSignedIn) {
+    return (<Redirect to="/sign-in" />)
+  }
+
+  if (selectedProducts.length === 0) {
+    return (<Redirect to="/" />)
+  }
+
+  const { productName, price } = selectedProducts[0];
+
   return (
     <StyledFormContainer>
-      <StyledHeader>Payment</StyledHeader>
-      <StyledSubHeader>Amount to pay $59.00</StyledSubHeader>
+      <StyledHeader>Checkout</StyledHeader>
+      <StyledSubHeader>Subscribe to {productName}</StyledSubHeader>
+      <div>Amount to pay: CA${price}</div>
       <Elements stripe={stripePromise}>
         <CreditCardForm />
       </Elements>

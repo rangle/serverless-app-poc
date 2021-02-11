@@ -18,7 +18,7 @@ const ProductList = () => {
       setIsLoading(true);
       try {
         const productDetails = await getProductDetails();
-        return dispatch({
+        dispatch({
           type: 'FETCH_PRODUCTS',
           payload: productDetails,
         });
@@ -33,7 +33,6 @@ const ProductList = () => {
   }, []);
 
   const handleSelectedProduct = async (selectedProduct) => {
-    console.log('hello', selectedProduct);
     dispatch({
       type: 'SELECT_PRODUCT',
       payload: selectedProduct,

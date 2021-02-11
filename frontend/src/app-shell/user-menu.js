@@ -11,7 +11,7 @@ const UserMenu = () => {
     // Sign out from cognito session - clear local storage credential
     signOut();
     // Clear AuthState
-    return dispatch({
+    dispatch({
       type: 'SIGN_OUT',
     });
   };

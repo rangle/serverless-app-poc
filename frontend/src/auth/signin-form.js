@@ -24,7 +24,7 @@ const SignInForm = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const updateUser = async() => {
+  const updateUser = async () => {
     const { attributes, token, authUserId } = await getAuthUser();
     const authPayload = {
       name: attributes.name,
@@ -32,7 +32,7 @@ const SignInForm = () => {
       authUserId,
       token,
     };
-    return dispatch({
+    dispatch({
       type: 'SIGN_IN',
       payload: authPayload,
     });

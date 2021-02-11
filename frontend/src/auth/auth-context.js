@@ -8,8 +8,6 @@ const initialState = {
   name: '',
   email: '',
   token: '', // cognito ID token
-  paymentMethodId: '', // stripe payment method Id
-  paymentCustomerId: '', // stripe customer Id
 };
 
 const reducer = (state, action) => {
@@ -20,22 +18,6 @@ const reducer = (state, action) => {
         ...state,
         isSignedIn: true,
         ...action.payload,
-      };
-    // Fetch user account info (paymentCustomerId and paymentMethodId) from DynamoDB
-    case 'FETCH_ACCOUNT':
-      return {
-        ...state,
-        ...action.payload,
-      };
-    case 'SET_PAYMENT_METHOD':
-      return {
-        ...state,
-        paymentMethodId: action.payload,
-      };
-    case 'SET_CUSTOMER_ID':
-      return {
-        ...state,
-        paymentCustomerId: action.payload,
       };
     case 'SIGN_OUT':
       return initialState;

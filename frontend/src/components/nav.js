@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 export const StyledNav = styled('nav')(
   ({ theme }) => `
@@ -13,7 +14,7 @@ export const StyledNav = styled('nav')(
 `
 );
 
-export const StyledNavHeader = styled('h1')(
+export const StyledNavHeader = styled(Link)(
   ({ theme }) => `
   color: ${theme.colors.blue};
   font-style: normal;
@@ -21,6 +22,7 @@ export const StyledNavHeader = styled('h1')(
   font-size: ${theme.fontSizes.large};
   line-height: ${theme.lineHeights.medium};
   text-transform: uppercase;
+  text-decoration: none;
 `
 );
 
