@@ -1,4 +1,4 @@
-import { STRIPE_SUBSCRIPTION_URL, STRIPE_CUSTOMER_URL, DB_USER_URL } from '../api/constants';
+import { STRIPE_SUBSCRIPTION_URL, STRIPE_CUSTOMER_URL, DB_USER_URL, STRIPE_PAYMENT_URL } from '../api/constants';
 
 
 /** Create a customer in Stripe, return customerID */
@@ -20,8 +20,24 @@ export const createCustomer = async (customerDetails) => {
   return customer.json();
 };
 
+export const updatePaymentMethod = async (paymentDetails) => {
+  const { token, paymentMethodId, customerId } = paymentDetails;
+  const paymentMethod = await fetch(STRIPE_PAYMENT_URL, {
+    method: 'POST',
+    headers: {
+      Authorization: token,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      customerId,
+      paymentMethodId,
+    }),
+  });
+  return paymentMethod.json();
+};
+
 export const createSubscription = async (subscriptionDetails) => {
-  const { token, paymentMethodId, customerId } = subscriptionDetails;
+  const { token, customerId } = subscriptionDetails;
   const priceId = 'price_1Hgbz3HeCPeFIGDDI2RSPHB3';
   const subscription = await fetch(STRIPE_SUBSCRIPTION_URL, {
     method: 'POST',
@@ -31,7 +47,6 @@ export const createSubscription = async (subscriptionDetails) => {
     },
     body: JSON.stringify({
       customerId,
-      paymentMethodId,
       priceId,
     }),
   });
