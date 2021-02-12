@@ -4,7 +4,7 @@ import {
   useElements,
   useStripe,
 } from '@stripe/react-stripe-js';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import { Redirect } from 'react-router-dom'
 import { loadStripe } from '@stripe/stripe-js';
 import { AuthContext } from '../auth/auth-context';
@@ -19,7 +19,7 @@ import {
 } from '../components/form';
 import { FormButton } from '../components/button';
 
-import { createCustomer, createSubscription } from '../payment/payment.service';
+import { createCustomer, createSubscription, getUserAccount, updatePaymentMethod } from '../payment/payment.service';
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
@@ -29,6 +29,9 @@ const CreditCardForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+
+  const [customerId, setCustomerId] = useState('')
+  const [paymentLast4, setPaymentLast4] = useState('');
 
   const { authState } = useContext(AuthContext);
   const { contentState } = useContext(ContentContext);
@@ -41,6 +44,24 @@ const CreditCardForm = () => {
     authUserId,
   } = authState;
   const { productName } = selectedProducts[0];
+
+  useEffect(() => {
+    const updateAccount = async () => {
+      setIsLoading(true);
+      try {
+        const account = await getUserAccount(token, authUserId);
+        const { customerId, paymentLast4 } = account.payload;
+        setCustomerId(customerId);
+        setPaymentLast4(paymentLast4);
+      } catch (err) {
+        throw err;
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    updateAccount();
+  }, []);
 
   const addPaymentMethod = async (card) => {
     try {
@@ -64,18 +85,6 @@ const CreditCardForm = () => {
     }
   };
 
-  const addSubscription = async (token, paymentMethodId, paymentCustomerId) => {
-    try {
-      const createSubscriptionOptions = {
-        token,
-        paymentMethodId,
-        customerId: paymentCustomerId,
-      };
-      await createSubscription(createSubscriptionOptions);
-    } catch (err) {
-      throw err;
-    }
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -84,28 +93,34 @@ const CreditCardForm = () => {
       return;
     }
 
-    let paymentCustomerId;
-    let paymentMethodId;
-
     try {
       setIsLoading(true);
-      if (!paymentCustomerId) {
-        paymentCustomerId = await addCustomer({
+
+      if (!customerId) {
+        debugger
+        const paymentCustomerId = await addCustomer({
           name,
           email,
           token,
           authUserId
         });
-
-        const cardElement = elements.getElement(CardElement);
-        paymentMethodId = await addPaymentMethod(cardElement);
+        setCustomerId(paymentCustomerId);
       }
 
-      addSubscription(authState.token, paymentMethodId, paymentCustomerId)
+      if (!paymentLast4) {
+        const cardElement = elements.getElement(CardElement);
+        const paymentMethodId = await addPaymentMethod(cardElement);
+        const updatedPaymentMethod = await updatePaymentMethod({ token, paymentMethodId, customerId });
+        const { last4 } = updatedPaymentMethod;
+        setPaymentLast4(last4);
+      }
+
+      await createSubscription({ token, customerId });
 
       setSuccessMessage('Create subscription successfully!');
     } catch (err) {
-      setErrorMessage('Failed to create subscription...', err);
+      console.log(err)
+      setErrorMessage(`Failed to create subscription..., ${err}`);
     } finally {
       setIsLoading(false);
     }
