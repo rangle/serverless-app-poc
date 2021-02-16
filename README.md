@@ -10,6 +10,12 @@ BiteTut is a serverless e-commerce storefront that provides subscription-based o
 - Highly customizable components with full theming support using [styled-components](https://styled-components.com/docs/advanced#theming)
 - Deploy and manage AWS infrastructure to use AWS Lambda functions with the [Serverless Framework](https://www.serverless.com/)
 
+## Overview
+
+### User Purchase Flow
+
+![User Purchase Flow](./doc/user-purchase-flow.png)
+
 ## Prerequisites
 
 ### Contentful Account
