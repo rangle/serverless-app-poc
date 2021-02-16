@@ -12,6 +12,18 @@ BiteTut is a serverless e-commerce storefront that provides subscription-based o
 
 ## Overview
 
+This project consists of a ReactJS front-end and a serverless back-end using AWS Lambda. The following AWS services are also used in this project:
+
+- S3: a public S3 bucket to host the React web app and a private S3 bucket to store private content
+- Simple Email Service (SES): notify customers with the pre-sign URL of the private content
+- Cognito: user sign-in and access control
+- Simple Notification Service (SNS): save user information to DynamoDB when a user is created in the Cognito user pool
+- DynamoDB: store user account information (e.g. user email and their Stripe customer ID)
+
+React app screenshots
+
+<img src="./doc/react-app-screenshots.png" alt="React app screenshots" width="80%"/>
+
 ### User Purchase Flow
 
 ![User Purchase Flow](./doc/user-purchase-flow.png)
