@@ -6,3 +6,4 @@ export * from './functions/save-user.function';
 export * from './functions/get-user.function';
 export * from './functions/update-user.function';
 export * from './functions/update-payment-method.function';
+export * from './functions/create-price.function';

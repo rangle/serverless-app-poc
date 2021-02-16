@@ -128,6 +128,14 @@ functions:
           path: /notify-invoice-paid
           method: post
           cors: true
+  createPrice:
+    handler: src/handler.createPrice
+    description: create product and price on Stripe whenever a product is published on Contentful
+    events:
+      - http:
+          path: /create-price
+          method: post
+          cors: true
 
 resources:
   # Cloudformation resources
