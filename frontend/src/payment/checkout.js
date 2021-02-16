@@ -43,13 +43,16 @@ const CreditCardForm = () => {
     token,
     authUserId,
   } = authState;
-  const { productName } = selectedProducts[0];
+  const { productName, planId } = selectedProducts[0];
 
   useEffect(() => {
     const updateAccount = async () => {
       setIsLoading(true);
       try {
         const account = await getUserAccount(token, authUserId);
+        if (!account.payload) {
+          return;
+        }
         const { customerId, paymentLast4 } = account.payload;
         setCustomerId(customerId);
         setPaymentLast4(paymentLast4);
@@ -88,6 +91,7 @@ const CreditCardForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    let paymentCustomerId;
 
     if (!stripe || !elements) {
       return;
@@ -97,8 +101,7 @@ const CreditCardForm = () => {
       setIsLoading(true);
 
       if (!customerId) {
-        debugger
-        const paymentCustomerId = await addCustomer({
+        paymentCustomerId = await addCustomer({
           name,
           email,
           token,
@@ -110,16 +113,15 @@ const CreditCardForm = () => {
       if (!paymentLast4) {
         const cardElement = elements.getElement(CardElement);
         const paymentMethodId = await addPaymentMethod(cardElement);
-        const updatedPaymentMethod = await updatePaymentMethod({ token, paymentMethodId, customerId });
+        const updatedPaymentMethod = await updatePaymentMethod({ token, paymentMethodId, paymentCustomerId });
         const { last4 } = updatedPaymentMethod;
         setPaymentLast4(last4);
       }
 
-      await createSubscription({ token, customerId });
+      await createSubscription({ token, paymentCustomerId, planId });
 
       setSuccessMessage('Create subscription successfully!');
     } catch (err) {
-      console.log(err)
       setErrorMessage(`Failed to create subscription..., ${err}`);
     } finally {
       setIsLoading(false);

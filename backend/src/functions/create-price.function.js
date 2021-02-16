@@ -9,7 +9,7 @@ export const createPrice = async (req, context) => {
   console.log('event', req.body)
   const { sys, fields } = JSON.parse(req.body);
 
-  if (sys.contentType.sys.id !== `product`) {
+  if (sys.contentType.sys.id !== `product` || sys.revision > 1) {
     return;
   }
 
