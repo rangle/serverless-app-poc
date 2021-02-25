@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { AuthContext } from './auth-context';
 import { authenticate, getAuthUser } from '../auth/auth.service';
 import { StyledHeader, StyledSubHeader } from '../components/common';
@@ -84,6 +85,7 @@ const SignInForm = () => {
           <StyledErrorMessage>{errorMessage}</StyledErrorMessage>
         )}
       </StyledForm>
+      <div>Don't have an account? <Link to="/sign-up">Sign up</Link> here.</div>
     </StyledFormContainer>
   );
 };

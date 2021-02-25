@@ -18,21 +18,17 @@ export const createPrice = async (req, context) => {
     const productPrice = fields.price['en-US'];
     const productId = sys.id;
 
-
-    const product = await stripe.products.create({
-      name: productName,
-    });
-
     console.log('product', product)
 
     const price = await stripe.prices.create({
-      unit_amount: parseInt(productPrice, 10) * 100,
+      unit_amount: parseFloat(productPrice, 10) * 100,
       currency: 'cad',
       recurring: { interval: 'month' },
-      product: product.id,
-      metadata: {
-        contentfulProductId: productId
-      }
+      product_data: {
+        name: productName,
+        active: true,
+      },
+      lookup_key: productId
     });
 
     console.log('price', price)

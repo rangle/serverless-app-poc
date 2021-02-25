@@ -12,7 +12,6 @@ export const createSubscription = async (req, context) => {
     const subscription = await stripe.subscriptions.create({
       customer: customerId,
       items: [{ price: priceId }],
-      expand: ['latest_invoice.payment_intent'],
     });
 
     return {

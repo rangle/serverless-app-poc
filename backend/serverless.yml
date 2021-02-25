@@ -12,7 +12,6 @@ plugins:
 provider:
   name: aws
   runtime: nodejs10.x
-  memorySize: 256
   profile: sz-${self:custom.currentStage}
   region: ${opt:region, 'us-east-1'}
   logRetentionInDays: 3
@@ -90,6 +89,7 @@ functions:
               Ref: ApiGatewayAuthorizer
   createCustomer:
     handler: src/handler.createCustomer
+    description: create Customer object in Stripe
     events:
       - http:
           path: /customer
@@ -134,6 +134,14 @@ functions:
     events:
       - http:
           path: /create-price
+          method: post
+          cors: true
+  updateProduct:
+    handler: src/handler.updateProduct
+    description: update Contentful product with the corresponding Stripe price ID
+    events:
+      - http:
+          path: /notify-price-added
           method: post
           cors: true
 
