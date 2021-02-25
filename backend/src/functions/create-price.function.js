@@ -3,6 +3,7 @@ import { Stripe } from 'stripe';
 const stripeSecret = process.env.STRIPE_SECRET_KEY;
 const stripe = new Stripe(stripeSecret, {
   apiVersion: '2020-03-02',
+  maxNetworkRetries: 2
 });
 
 export const createPrice = async (req, context) => {
@@ -17,8 +18,6 @@ export const createPrice = async (req, context) => {
     const productName = fields.productName['en-US'];
     const productPrice = fields.price['en-US'];
     const productId = sys.id;
-
-    console.log('product', product)
 
     const price = await stripe.prices.create({
       unit_amount: parseFloat(productPrice, 10) * 100,
