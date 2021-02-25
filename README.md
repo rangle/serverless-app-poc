@@ -1,4 +1,4 @@
-# **BiteTut - Headless Serverless Ecommerce POC**
+# **BiteTut - Headless Serverless E-commerce POC**
 
 BiteTut is a serverless e-commerce storefront that provides subscription-based online learning content managed by headless CMS.
 
@@ -23,6 +23,10 @@ This project consists of a ReactJS front-end and a serverless back-end using AWS
 React app screenshots
 
 <img src="./doc/react-app-screenshots.png" alt="React app screenshots" width="80%"/>
+
+### User Sign Up Flow
+
+![User Sign Up Flow](./doc/user-sign-up-flow.png)
 
 ### User Purchase Flow
 
