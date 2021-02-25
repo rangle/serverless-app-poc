@@ -14,21 +14,23 @@ export const createCustomer = async (customerDetails) => {
 };
 
 export const updatePaymentMethod = async (paymentDetails) => {
-  const { token, paymentMethodId, paymentCustomerId } = paymentDetails;
+  const { token, paymentMethodId, customerId } = paymentDetails;
+
+  console.log(paymentMethodId, customerId)
 
   return apiClient(`${STRIPE_PAYMENT_URL}`, token, {
     body: {
-      customerId: paymentCustomerId,
+      customerId,
       paymentMethodId,
     }
   });
 };
 
 export const createSubscription = async (subscriptionDetails) => {
-  const { token, paymentCustomerId, planId } = subscriptionDetails;
+  const { token, customerId, planId } = subscriptionDetails;
   return apiClient(`${STRIPE_SUBSCRIPTION_URL}`, token, {
     body: {
-      customerId: paymentCustomerId,
+      customerId,
       priceId: planId,
     }
   });

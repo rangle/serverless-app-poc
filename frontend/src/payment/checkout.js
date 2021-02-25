@@ -53,7 +53,7 @@ const CreditCardForm = () => {
         if (!account.payload) {
           return;
         }
-        const { customerId, paymentLast4 } = account.payload;
+        const { stripeCustomerId: customerId, paymentLast4 } = account.payload;
         setCustomerId(customerId);
         setPaymentLast4(paymentLast4);
       } catch (err) {
@@ -113,12 +113,16 @@ const CreditCardForm = () => {
       if (!paymentLast4) {
         const cardElement = elements.getElement(CardElement);
         const paymentMethodId = await addPaymentMethod(cardElement);
-        const updatedPaymentMethod = await updatePaymentMethod({ token, paymentMethodId, paymentCustomerId });
+        const updatedPaymentMethod = await updatePaymentMethod({ token, paymentMethodId, customerId });
         const { last4 } = updatedPaymentMethod;
         setPaymentLast4(last4);
       }
 
-      await createSubscription({ token, paymentCustomerId, planId });
+      if (!planId || !customerId) {
+        throw new Error('Cannot create subscription.')
+      }
+
+      await createSubscription({ token, customerId, planId });
 
       setSuccessMessage('Create subscription successfully!');
     } catch (err) {
