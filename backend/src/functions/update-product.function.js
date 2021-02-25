@@ -10,14 +10,16 @@ export const updateProduct = async (req, context) => {
     if (event.type !== 'price.created') {
       return;
     }
-    const { id: stripePriceId, lookup_key } = event.data.object;
+    const { id, lookup_key } = event.data.object;
     const space = await contentfulClient.getSpace(process.env.CONTENTFUL_SPACE_ID);
     const env = await space.getEnvironment('master');
 
-    let productEntry = env.getEntry(lookup_key);
+    let productEntry = await env.getEntry(lookup_key);
+
+    console.log('entry', productEntry, id)
 
 
-    productEntry.fields.planId['en-US'] = stripePriceId;
+    productEntry.fields.planId['en-US'] = id;
 
     const updatedProduct = await productEntry.update();
     await updatedProduct.publish();
